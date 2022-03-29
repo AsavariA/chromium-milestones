@@ -1,17 +1,27 @@
-import { collection, updateDoc, deleteDoc,  doc, setDoc, query, onSnapshot, orderBy } from "firebase/firestore";
+import {
+  collection,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  doc,
+  query,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
 import db from "./fire";
+import { v4 as uuidv4 } from "uuid";
 
 export const handleCreate = async (message, result, status, handleClose) => {
   try {
-    const docRef = await setDoc(doc(db, "jobs", ), {
+    await setDoc(doc(db, "jobs", uuidv4()), {
       message: message,
       result: result,
       status: status,
       created: new Date(),
       updated: new Date(),
     });
-    console.log("Document written with ID: ", docRef.id);
-    handleClose()
+    console.log("Document created");
+    handleClose();
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -22,10 +32,10 @@ export const handleRead = (setRows) => {
   onSnapshot(q, (querySnapshot) => {
     const jobs = [];
     querySnapshot.forEach((doc) => {
-      var obj = {...doc.data(), id: doc.id}
+      var obj = { ...doc.data(), id: doc.id };
       jobs.push(obj);
     });
-    setRows(jobs)
+    setRows(jobs);
   });
 };
 
@@ -36,33 +46,39 @@ export const sortDocs = (setRows, property, order) => {
     querySnapshot.forEach((doc) => {
       jobs.push(doc.data());
     });
-    setRows(jobs)
+    setRows(jobs);
   });
 };
 
-export const handleEditDoc = async (id, message, result, status, handleClose) => {
+export const handleEditDoc = async (
+  id,
+  message,
+  result,
+  status,
+  handleClose
+) => {
   try {
     const docRef = doc(db, "jobs", id);
     await updateDoc(docRef, {
       message: message,
       status: status,
       result: result,
-      updated: new Date()
-  });
+      updated: new Date(),
+    });
     console.log("Document Updated Succesfully", docRef.id);
-    handleClose()
+    handleClose();
   } catch (e) {
     console.error("Error editing document: ", e);
   }
-}
+};
 
 export const handleDelete = async (id, handleClose) => {
   try {
     const docRef = doc(db, "jobs", id);
     await deleteDoc(docRef);
     console.log("Document Deleted Succesfully");
-    handleClose()
+    handleClose();
   } catch (e) {
     console.error("Error deleting document: ", e);
   }
-}
+};

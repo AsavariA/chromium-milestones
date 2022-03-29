@@ -1,5 +1,4 @@
 import * as React from "react";
-import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -16,7 +15,6 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
-import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { handleRead, sortDocs } from "../services/fire_functions";
@@ -24,7 +22,9 @@ import { time_since } from "../services/time_since";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
-import { Button } from "@mui/material";
+import Edit from "./Edit";
+import Delete from "./Delete";
+import Add from "./Add";
 
 const headCells = [
   {
@@ -51,6 +51,14 @@ const headCells = [
     id: "updated",
     label: "Updated",
   },
+  {
+    id: "edit",
+    label: "Edit",
+  },
+  {
+    id: "delete",
+    label: "Delete",
+  },
 ];
 
 function EnhancedTableHead({ order, orderBy, onRequestSort }) {
@@ -68,9 +76,9 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
             padding={"normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            {headCell.id === "id" ||
-            headCell.id === "message" ||
-            headCell.id === "result" ? (
+            {headCell.id !== "created" &&
+            headCell.id !== "updated" &&
+            headCell.id !== "status" ? (
               <p>{headCell.label}</p>
             ) : (
               <TableSortLabel
@@ -96,7 +104,7 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
 }
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, filterFields, setFilterFields } = props;
+  const { filterFields, setFilterFields } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -120,34 +128,16 @@ const EnhancedTableToolbar = (props) => {
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
       }}
     >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Jobs Control Plane
-        </Typography>
-      )}
+      <Typography
+        sx={{ flex: "1 1 100%" }}
+        variant="h6"
+        id="tableTitle"
+        component="div"
+      >
+        Jobs Control Plane
+      </Typography>
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
@@ -199,11 +189,14 @@ const EnhancedTableToolbar = (props) => {
           />
         </MenuItem>
       </Menu>
+      <>
+      <Add />
       <Tooltip title="Filter list">
         <IconButton onClick={handleOpen}>
           <FilterListIcon />
         </IconButton>
       </Tooltip>
+      </>
     </Toolbar>
   );
 };
@@ -213,7 +206,7 @@ export default function EnhancedTable() {
   const [orderBy, setOrderBy] = React.useState("created");
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState([]);
   const [filterFields, setFilterFields] = React.useState([
     "Scheduled",
@@ -288,6 +281,12 @@ export default function EnhancedTable() {
                       </TableCell>
                       <TableCell align="left">
                         {time_since(row.updated.toDate())}
+                      </TableCell>
+                      <TableCell align="left">
+                        <Edit job={row} />
+                      </TableCell>
+                      <TableCell align="left">
+                        <Delete id={row.id} />
                       </TableCell>
                     </TableRow>
                   );
