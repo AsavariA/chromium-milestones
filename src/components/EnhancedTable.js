@@ -96,7 +96,7 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
 }
 
 const EnhancedTableToolbar = (props) => {
-  const { numSelected, filterFields } = props;
+  const { numSelected, filterFields, setFilterFields } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -109,11 +109,9 @@ const EnhancedTableToolbar = (props) => {
 
   const handleChange = (e, statusName) => {
     if (!e.target.checked) {
-      filterFields.splice(filterFields.indexOf(statusName), 1);
-      console.log(filterFields);
+      setFilterFields(filterFields.filter((item) => item !== statusName));
     } else {
-      filterFields.push(statusName);
-      console.log(filterFields);
+      setFilterFields((filterFields) => [...filterFields, statusName]);
     }
   };
 
@@ -160,7 +158,7 @@ const EnhancedTableToolbar = (props) => {
           <FormControlLabel
             control={
               <Checkbox
-                defaultChecked
+                checked={filterFields.includes("Scheduled")}
                 onChange={(e) => handleChange(e, "Scheduled")}
               />
             }
@@ -171,7 +169,7 @@ const EnhancedTableToolbar = (props) => {
           <FormControlLabel
             control={
               <Checkbox
-                defaultChecked
+                checked={filterFields.includes("Running")}
                 onChange={(e) => handleChange(e, "Running")}
               />
             }
@@ -182,7 +180,7 @@ const EnhancedTableToolbar = (props) => {
           <FormControlLabel
             control={
               <Checkbox
-                defaultChecked
+                checked={filterFields.includes("Finished")}
                 onChange={(e) => handleChange(e, "Finished")}
               />
             }
@@ -193,15 +191,12 @@ const EnhancedTableToolbar = (props) => {
           <FormControlLabel
             control={
               <Checkbox
-                defaultChecked
+                checked={filterFields.includes("Failed")}
                 onChange={(e) => handleChange(e, "Failed")}
               />
             }
             label="Failed"
           />
-        </MenuItem>
-        <MenuItem>
-          <Button fullWidth>Filter</Button>
         </MenuItem>
       </Menu>
       <Tooltip title="Filter list">
@@ -220,7 +215,12 @@ export default function EnhancedTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
-  var filterFields = ["Scheduled", "Running", "Finished", "Failed"];
+  const [filterFields, setFilterFields] = React.useState([
+    "Scheduled",
+    "Running",
+    "Finished",
+    "Failed",
+  ]);
 
   React.useEffect(() => {
     handleRead(setRows);
@@ -254,7 +254,10 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar filterFields={filterFields} />
+        <EnhancedTableToolbar
+          filterFields={filterFields}
+          setFilterFields={setFilterFields}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -269,6 +272,7 @@ export default function EnhancedTable() {
             />
             <TableBody>
               {rows
+                .filter((x) => filterFields.includes(x.status))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   return (
