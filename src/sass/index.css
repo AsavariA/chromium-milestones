@@ -1,1 +1,15 @@
-/* No CSS *//*# sourceMappingURL=index.css.map */
+.App {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #fffed3;
+}
+
+.MuiTableBody-root {
+  background-color: #fcfbfb;
+}
+
+.MuiTableContainer-root {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+/*# sourceMappingURL=index.css.map */
