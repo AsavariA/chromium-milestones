@@ -76,7 +76,7 @@ export default function Add() {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleCreate(message, result, status)}>
+          <Button onClick={() => handleCreate(message, result, status, handleClose)}>
             Save
           </Button>
           <Button onClick={handleClose}>Cancel</Button>
