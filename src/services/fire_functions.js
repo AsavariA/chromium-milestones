@@ -82,3 +82,26 @@ export const handleDelete = async (id, handleClose) => {
     console.error("Error deleting document: ", e);
   }
 };
+
+export const handleReadMilestone2 = async (aggArray, setAggArray) => {
+  for (let i = 0; i < 2; i++) {
+    const collRef = collection(
+      db,
+      "milestone-2",
+      "283ae5d0-589b-4b0e-8a45-93b21c8111a2",
+      `aggregator${i + 1}`
+    );
+    const q = query(collRef);
+    onSnapshot(q, (querySnapshot) => {
+      const subjobs = [];
+      querySnapshot.forEach((doc) => {
+        var obj = { ...doc.data(), id: doc.id };
+        subjobs.push(obj);
+      });
+      console.log(subjobs)
+      setAggArray(...aggArray, subjobs)
+    });
+  }
+  // setAggArray(l);
+  console.log(aggArray);
+};

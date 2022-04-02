@@ -201,7 +201,7 @@ const EnhancedTableToolbar = (props) => {
   );
 };
 
-export default function EnhancedTable() {
+export default function Milestone1() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("created");
   const [page, setPage] = React.useState(0);
@@ -246,7 +246,7 @@ export default function EnhancedTable() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: "100%", mb: 2, mt:2 }}>
         <EnhancedTableToolbar
           filterFields={filterFields}
           setFilterFields={setFilterFields}
@@ -270,7 +270,7 @@ export default function EnhancedTable() {
                 .map((row, index) => {
                   return (
                     <TableRow hover tabIndex={-1} key={index}>
-                      <TableCell component="th" scope="row" padding="normal">
+                      <TableCell scope="row" padding="normal">
                         {index + 1}
                       </TableCell>
                       <TableCell align="left">{row.message}</TableCell>
