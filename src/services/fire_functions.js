@@ -83,7 +83,8 @@ export const handleDelete = async (id, handleClose) => {
   }
 };
 
-export const handleReadMilestone2 = async (aggArray, setAggArray) => {
+export const handleReadMilestone2 = (setAggArray) => {
+  var l = {};
   for (let i = 0; i < 2; i++) {
     const collRef = collection(
       db,
@@ -98,10 +99,10 @@ export const handleReadMilestone2 = async (aggArray, setAggArray) => {
         var obj = { ...doc.data(), id: doc.id };
         subjobs.push(obj);
       });
-      console.log(subjobs)
-      setAggArray(...aggArray, subjobs)
+      l[q._path.segments[2]] = subjobs;
+      if (Object.keys(l).length === 2) {
+        setAggArray(l);
+      }
     });
   }
-  // setAggArray(l);
-  console.log(aggArray);
 };

@@ -217,7 +217,6 @@ export default function Milestone1() {
 
   React.useEffect(() => {
     handleRead(setRows);
-    console.log(rows);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
