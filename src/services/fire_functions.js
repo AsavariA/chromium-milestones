@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import db from "./fire";
 import { v4 as uuidv4 } from "uuid";
+import { aggregateStatus } from "./aggregateStatus";
 
 export const handleCreate = async (message, result, status, handleClose) => {
   try {
@@ -83,15 +84,21 @@ export const handleDelete = async (id, handleClose) => {
   }
 };
 
-export const handleReadMilestone2 = (setAggArray) => {
+export const handleDocIdsMilestone2 = (setIdArray) => {
+  const q = query(collection(db, "milestone-2"));
+  onSnapshot(q, (querySnapshot) => {
+    const jobsIds = [];
+    querySnapshot.forEach((doc) => {
+      jobsIds.push(doc.id);
+    });
+    setIdArray(jobsIds);
+  });
+};
+
+export const handleReadMilestone2 = (id, setAggArray, setAggStatus) => {
   var l = {};
   for (let i = 0; i < 2; i++) {
-    const collRef = collection(
-      db,
-      "milestone-2",
-      "283ae5d0-589b-4b0e-8a45-93b21c8111a2",
-      `aggregator${i + 1}`
-    );
+    const collRef = collection(db, "milestone-2", id, `aggregator${i + 1}`);
     const q = query(collRef);
     onSnapshot(q, (querySnapshot) => {
       const subjobs = [];
@@ -102,6 +109,12 @@ export const handleReadMilestone2 = (setAggArray) => {
       l[q._path.segments[2]] = subjobs;
       if (Object.keys(l).length === 2) {
         setAggArray(l);
+        var statusArr = [];
+        for (let j = 0; j < 2; j++) {
+          statusArr.push(l[`aggregator${j + 1}`][0].status);
+          statusArr.push(l[`aggregator${j + 1}`][1].status);
+        }
+        setAggStatus(aggregateStatus(statusArr));
       }
     });
   }
