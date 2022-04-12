@@ -12,4 +12,14 @@
   -webkit-box-shadow: none;
           box-shadow: none;
 }
+
+.pagination {
+  margin: 2rem 0;
+}
+
+.pagination ul {
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
 /*# sourceMappingURL=index.css.map */
